@@ -110,6 +110,14 @@ public class TestNgListener implements ISuiteListener, ITestListener, IInvokedMe
         for (XmlSuite suite : suites) {
             suite.setName(projectName);
 
+            // Class/method parallelism works within an XmlTest. Splitting classes
+            // into separate XmlTests here would silently serialize those blocks.
+            if (suite.getParallel() == XmlSuite.ParallelMode.CLASSES
+                    || suite.getParallel() == XmlSuite.ParallelMode.METHODS
+                    || suite.getParallel() == XmlSuite.ParallelMode.INSTANCES) {
+                continue;
+            }
+
             List<XmlTest> originalTests = new ArrayList<>(suite.getTests());
             suite.getTests().clear();
 

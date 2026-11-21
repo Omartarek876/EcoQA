@@ -129,10 +129,14 @@ needed):
 
 - `<parallelMode>` defaults to `classes`: every test class gets its own TestNG
   thread, while the methods inside a class always run sequentially. This is the
-  safe default for any suite, including classes with ordered or stateful flows.
+  safer default for classes with ordered or stateful flows, provided different
+  classes do not share mutable state.
 - `<parallelThreads>` defaults to `4`, a sensible size for a standard CI runner.
-- `DriverFactory` keeps the browser in a `ThreadLocal`, so every parallel test
-  gets its own isolated driver session with zero extra code.
+- `DriverFactory` keeps the browser in a `ThreadLocal`; tests must create and
+  close their own session through the factory, as the templates do.
+- `TestNgListener` keeps the classes in the same TestNG test block when parallel
+  class/method execution is enabled, rather than splitting them for report
+  naming. This lets TestNG actually schedule different classes together.
 
 Tune both per run without editing the pom, for example
 `mvn clean test -DparallelThreads=8` or `mvn clean test -DparallelMode=methods`
@@ -150,9 +154,10 @@ Rules for keeping tests parallel-safe:
    or two CI runs never fight over the same account on the site under test.
 4. Never share files or folders between parallel tests (downloads, screenshots,
    temp files); give each test its own path.
-5. Read-only tests (browsing, search, validations) are safe at any parallel
-   level; account-creating or order-placing flows are the ones to review before
-   switching to `-DparallelMode=methods`.
+5. Review every class before switching to `-DparallelMode=methods`, including
+   read-only tests: browser fields, setup/teardown, dependencies and shared
+   fixtures must all be safe across threads. Account-creating and order-placing
+   flows also need isolated server-side data.
 
 ### Smoke tests - `src/test/java/smoke/`
 
