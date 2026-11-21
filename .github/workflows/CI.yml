@@ -2,11 +2,12 @@ name: Selenium UI automation
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ui-tests-${{ github.workflow }}-${{ github.ref }}
@@ -52,3 +53,10 @@ jobs:
             target/allure-report/
           if-no-files-found: ignore
           retention-days: 14
+
+      - name: Publish Allure report to GitHub Pages
+        if: always() && github.event_name != 'pull_request' && hashFiles('target/allure-report/index.html') != ''
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: target/allure-report

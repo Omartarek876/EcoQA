@@ -80,11 +80,12 @@ constructs cleanly with its empty locators. No external site needed.
 
 ## CI
 
-`.github/workflows/CI.yml` runs the suite on every push, pull request and manual
-trigger: it sets up Java 21, runs `mvn clean test`, generates the Allure report when
-results exist, and uploads the test results and report as build artifacts (kept for
-14 days). No project-specific values are hardcoded, so the workflow works unchanged
-for any store that adopts this framework.
+`.github/workflows/CI.yml` runs the suite on every push to `main`, pull request
+and manual trigger: it sets up Java 21, runs `mvn clean test`, generates the Allure
+report when results exist, uploads the test results and report as build artifacts
+(kept for 14 days), and publishes the report to GitHub Pages (see below). No
+project-specific values are hardcoded, so the workflow works unchanged for any
+store that adopts this framework.
 
 ## Allure reporting
 
@@ -98,10 +99,20 @@ needed in individual tests:
    runs `mvn allure:report` and writes `target/allure-report/index.html`.
    On a desktop with browser support, it also tries to open the report.
    Maven must be available on `PATH` for this automatic step.
-3. **In CI**, the workflow also has an explicit report-generation step when
-   results exist, followed by an artifact upload. Open a completed Actions run,
-   download `ui-test-results`, unzip it, and open `allure-report/index.html`.
-   The report is configured as a single HTML file and includes its data.
+3. **In CI**, the workflow generates the report again and publishes it through
+   two channels, so you pick whichever you prefer:
+
+   **Option 1 - live GitHub Pages link.** After every run on `main`, the report
+   is published to the `gh-pages` branch and served at
+   <https://omartarek876.github.io/EcoQA/>, open it from any device, no downloads.
+   One-time setup for a fresh copy of this framework: run the CI once (it creates
+   the `gh-pages` branch), then in the repository Settings -> Pages choose
+   "Deploy from a branch" with `gh-pages` / `(root)`.
+
+   **Option 2 - downloadable artifact.** Every run uploads `ui-test-results` as a
+   build artifact (kept for 14 days). Open a completed Actions run, download it,
+   unzip it, and open `allure-report/index.html`. The report is configured as a
+   single HTML file and includes its data.
 
 To regenerate a report locally, run `mvn allure:report`. To serve the latest
 results in your browser, run `mvn allure:serve`.
