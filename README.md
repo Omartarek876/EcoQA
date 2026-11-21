@@ -13,33 +13,7 @@ cart management and checkout.
 ![TestNG](https://img.shields.io/badge/TestNG-7.11-FF7300)
 ![Maven](https://img.shields.io/badge/Maven-C71A36?logo=apachemaven&logoColor=white)
 
-![Tour of the live Allure report published from the latest CI run](docs/gifs/report-tour.gif)
-
-*Browsing the live report this framework publishes after every CI run:
-overview, suites, a passing test with its Allure steps, graphs and timeline.*
-
-## What happens on every push
-
-![Execution flow: push, CI, TestNG parallel threads with their own browsers, Allure report, live GitHub Pages link](docs/diagrams/execution-flow.svg)
-
-1. A push to `main` (or a pull request) triggers `.github/workflows/CI.yml`.
-2. The workflow sets up Java 21 and runs `mvn clean test`.
-3. TestNG runs the test classes in parallel (see
-   [Parallel execution](#parallel-execution)): every class gets its own thread
-   and its own browser session through the thread-local `DriverFactory`.
-4. The Allure integration records every step, with a screenshot attached when
-   a test fails.
-5. The report is generated as a single HTML file and published to GitHub Pages,
-   so the latest results are always one link away:
-   <https://omartarek876.github.io/EcoQA/>.
-
-## Tech stack
-
-- Java 21, Maven
-- Selenium WebDriver 4.52 (Chrome, Firefox, Edge)
-- TestNG
-- Allure (allure-testng 3.0) for HTML reports
-- GitHub Actions CI
+[Structure](#framework-structure) · [Execution flow](#what-happens-on-every-push) · [Quick start](#use-it-on-your-store) · [Parallel execution](#parallel-execution) · [Live report](https://omartarek876.github.io/EcoQA/)
 
 ## Framework structure
 
@@ -83,14 +57,49 @@ flowchart LR
     U --> R["Allure report<br/>local + GitHub Pages"]
 ```
 
-The tests never touch WebDriver directly: they call the page flows, the page
-flows call the utilities, and the utilities own the driver, the waits, the
-assertions and the reporting. Data lives next to the tests as JSON, never
-hardcoded.
+Page-based tests call the page flows, which use the shared utilities for
+driver access, waits, assertions and reporting. Per-page JSON files keep
+site-specific data separate from test logic.
+
+![Animated tour using real screenshots of the published Allure report](docs/gifs/report-tour.gif)
+
+*A looping tour assembled from real report screenshots: overview, suites,
+a passing test with its Allure steps, graphs and timeline. This is report
+navigation, not a recording of browser test execution.*
+
+## What happens on every push
+
+![Execution flow: push, CI, parallel UI workers, Allure and GitHub Pages](docs/diagrams/execution-flow.svg)
+
+*Illustration of parallel UI work. Browser sessions are created by UI tests as
+needed, not reserved for every worker. The current smoke suite also has non-UI checks.*
+
+1. A push to `main` (or a pull request) triggers `.github/workflows/CI.yml`.
+2. The workflow sets up Java 21 and runs `mvn clean test`.
+3. TestNG runs the test classes in parallel (see
+   [Parallel execution](#parallel-execution)): each class stays on one worker
+   from a pool of up to four workers. UI tests create isolated browser
+   sessions through the thread-local `DriverFactory`; non-UI checks need no browser.
+4. Allure records annotated steps. The listener attaches a failure screenshot
+   when a browser session is available.
+5. CI generates a single-file HTML report and uploads the artifact. Non-PR
+   runs publish it to GitHub Pages, so the report is one link away:
+   <https://omartarek876.github.io/EcoQA/>.
+
+## Tech stack
+
+- Java 21, Maven
+- Selenium WebDriver 4.52 (Chrome, Firefox, Edge)
+- TestNG
+- Allure (allure-testng 3.0) for HTML reports
+- GitHub Actions CI
 
 ## What's inside
 
 ### Ready e-commerce page flows - `src/main/java/pages/`
+
+<details>
+<summary>Page-flow catalog and setup notes</summary>
 
 Each page class carries the methods any e-commerce site needs, written on top of
 the framework utilities with Allure step reporting. The locators are intentionally
@@ -114,7 +123,13 @@ empty: fill them for your site and the flows work as-is.
 | `WishlistPage` | wishlist items, move to cart, remove from wishlist, empty check |
 | `ContactPage` | contact form, full `sendMessage(...)` flow, success validation |
 
+
+</details>
+
 ### Framework utilities - `src/main/java/utils/`
+
+<details>
+<summary>Utility reference</summary>
 
 | Class | Purpose |
 | --- | --- |
@@ -130,6 +145,9 @@ empty: fill them for your site and the flows work as-is.
 | `RetryAnalyzer` | Decides whether a failed test gets another attempt (see Automatic retry below) |
 | `RetryListener` | Attaches `RetryAnalyzer` to every test method automatically, no per-test changes |
 | `AllureReportGenerator` | Runs `mvn allure:report` and opens the generated HTML report locally |
+
+
+</details>
 
 ### Configuration - `src/main/resources/`
 
