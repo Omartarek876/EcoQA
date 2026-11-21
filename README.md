@@ -53,6 +53,8 @@ empty: fill them for your site and the flows work as-is.
 | `Validations` | Assertion helpers with Allure step reporting |
 | `JsonFileManager` | Reads test data from JSON files with JSONPath queries |
 | `TestNgListener` | TestNG listener: suite/test lifecycle hooks and Allure report generation after the suite |
+| `RetryAnalyzer` | Decides whether a failed test gets another attempt (see Automatic retry below) |
+| `RetryListener` | Attaches `RetryAnalyzer` to every test method automatically, no per-test changes |
 | `AllureReportGenerator` | Runs `mvn allure:report` and opens the generated HTML report locally |
 
 ### Configuration - `src/main/resources/`
@@ -95,6 +97,30 @@ new LoginPage()
 
 A ready-to-copy class showing the full pattern lives at
 `src/test/java/templates/PageTestTemplate.java`.
+
+### Automatic retry for flaky tests
+
+UI suites against live sites always have some flaky tests: the site is slow, an
+element renders late, and an otherwise correct test fails for environmental
+reasons. The framework retries these automatically:
+
+- `RetryAnalyzer` (`src/main/java/utils/RetryAnalyzer.java`) implements
+  TestNG's `IRetryAnalyzer`. When a test fails, it decides whether the test
+  gets another attempt.
+- `RetryListener` (`src/main/java/utils/RetryListener.java`) implements
+  `IAnnotationTransformer` and attaches the analyzer to every test method, so
+  no test class needs any annotation or code change. A test that declares its
+  own retry analyzer keeps it.
+- The maximum number of attempts is configurable: `maxTestAttempts` in
+  `src/main/resources/execution.properties` (default `2`, meaning one retry
+  after the first failure). Override it per run with
+  `mvn clean test -DmaxTestAttempts=3`.
+
+Both listeners are registered once in `pom.xml` next to `TestNgListener`, so
+retrying works for the whole suite out of the box. Every attempt stays visible
+in the results: TestNG reports the retried runs, and Allure keeps the failed
+attempts with their screenshots next to the final result, so a flaky pass never
+hides that a retry happened.
 
 ### Smoke tests - `src/test/java/smoke/`
 

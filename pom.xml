@@ -91,7 +91,7 @@
                     <properties>
                         <property>
                             <name>listener</name>
-                            <value>utils.TestNgListener</value>
+                            <value>utils.TestNgListener,utils.RetryListener</value>
                         </property>
                     </properties>
                 </configuration>
