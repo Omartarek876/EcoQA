@@ -12,6 +12,9 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- TestNG parallel execution: classes run on separate threads by default -->
+        <parallelMode>classes</parallelMode>
+        <parallelThreads>4</parallelThreads>
     </properties>
 
     <dependencies>
@@ -78,6 +81,10 @@
                 <version>3.5.4</version>
 
                 <configuration>
+                    <!-- Run test classes in parallel; tune with -DparallelMode / -DparallelThreads -->
+                    <parallel>${parallelMode}</parallel>
+                    <threadCount>${parallelThreads}</threadCount>
+
                     <!-- Allure results output directory -->
                     <systemPropertyVariables>
                         <allure.results.directory>target/allure-results</allure.results.directory>

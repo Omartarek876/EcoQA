@@ -122,6 +122,38 @@ in the results: TestNG reports the retried runs, and Allure keeps the failed
 attempts with their screenshots next to the final result, so a flaky pass never
 hides that a retry happened.
 
+### Parallel execution
+
+Test classes run in parallel out of the box, wired in `pom.xml` (no `testng.xml`
+needed):
+
+- `<parallelMode>` defaults to `classes`: every test class gets its own TestNG
+  thread, while the methods inside a class always run sequentially. This is the
+  safe default for any suite, including classes with ordered or stateful flows.
+- `<parallelThreads>` defaults to `4`, a sensible size for a standard CI runner.
+- `DriverFactory` keeps the browser in a `ThreadLocal`, so every parallel test
+  gets its own isolated driver session with zero extra code.
+
+Tune both per run without editing the pom, for example
+`mvn clean test -DparallelThreads=8` or `mvn clean test -DparallelMode=methods`
+to parallelize the methods inside each class as well.
+
+Rules for keeping tests parallel-safe:
+
+1. Every test manages its own browser through `DriverFactory` (the templates
+   already do) and never shares a driver between tests.
+2. No shared mutable fields between test methods: anything one method writes and
+   another reads (created accounts, cart contents, order ids) ties them to
+   sequential order. Keep that state local to the method, or keep the class on
+   sequential methods, which the default `classes` mode already guarantees.
+3. Use unique test data per run (timestamped emails and names), so two threads
+   or two CI runs never fight over the same account on the site under test.
+4. Never share files or folders between parallel tests (downloads, screenshots,
+   temp files); give each test its own path.
+5. Read-only tests (browsing, search, validations) are safe at any parallel
+   level; account-creating or order-placing flows are the ones to review before
+   switching to `-DparallelMode=methods`.
+
 ### Smoke tests - `src/test/java/smoke/`
 
 Verify the framework itself: configuration loads correctly, `DriverFactory`
