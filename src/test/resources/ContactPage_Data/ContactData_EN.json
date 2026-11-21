@@ -1,0 +1,10 @@
+{
+  "contactForm": {
+    "name": "TODO: fill per site",
+    "validEmail": "TODO: fill per site",
+    "invalidEmail": "TODO: fill per site",
+    "subject": "TODO: fill per site",
+    "message": "TODO: fill per site",
+    "empty": "TODO: fill per site"
+  }
+}

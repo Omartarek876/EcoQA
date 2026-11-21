@@ -1,0 +1,12 @@
+{
+  "card": {
+    "number": "TODO: املأ حسب الموقع",
+    "cardHolder": "TODO: املأ حسب الموقع",
+    "expiryMonth": "TODO: املأ حسب الموقع",
+    "expiryYear": "TODO: املأ حسب الموقع",
+    "cvv": "TODO: املأ حسب الموقع",
+    "expiredNumber": "TODO: املأ حسب الموقع",
+    "invalidNumber": "TODO: املأ حسب الموقع",
+    "empty": "TODO: املأ حسب الموقع"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "search": {
+    "existingProduct": "TODO: fill per site",
+    "partialName": "TODO: fill per site",
+    "noResults": "TODO: fill per site",
+    "empty": "TODO: fill per site"
+  },
+  "sorting": {
+    "priceLowToHigh": "TODO: fill per site",
+    "priceHighToLow": "TODO: fill per site",
+    "nameAZ": "TODO: fill per site"
+  }
+}

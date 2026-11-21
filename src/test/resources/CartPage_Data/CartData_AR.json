@@ -1,0 +1,10 @@
+{
+  "cart": {
+    "existingProductName": "TODO: املأ حسب الموقع",
+    "increasedQuantity": "TODO: املأ حسب الموقع",
+    "decreasedQuantity": "TODO: املأ حسب الموقع",
+    "validCoupon": "TODO: املأ حسب الموقع",
+    "expiredCoupon": "TODO: املأ حسب الموقع",
+    "invalidCoupon": "TODO: املأ حسب الموقع"
+  }
+}

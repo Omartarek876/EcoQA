@@ -1,0 +1,10 @@
+{
+  "cart": {
+    "existingProductName": "TODO: fill per site",
+    "increasedQuantity": "TODO: fill per site",
+    "decreasedQuantity": "TODO: fill per site",
+    "validCoupon": "TODO: fill per site",
+    "expiredCoupon": "TODO: fill per site",
+    "invalidCoupon": "TODO: fill per site"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "search": {
+    "existingProduct": "TODO: املأ حسب الموقع",
+    "partialName": "TODO: املأ حسب الموقع",
+    "noResults": "TODO: املأ حسب الموقع",
+    "empty": "TODO: املأ حسب الموقع"
+  },
+  "sorting": {
+    "priceLowToHigh": "TODO: املأ حسب الموقع",
+    "priceHighToLow": "TODO: املأ حسب الموقع",
+    "nameAZ": "TODO: املأ حسب الموقع"
+  }
+}

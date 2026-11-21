@@ -1,0 +1,12 @@
+{
+  "card": {
+    "number": "TODO: fill per site",
+    "cardHolder": "TODO: fill per site",
+    "expiryMonth": "TODO: fill per site",
+    "expiryYear": "TODO: fill per site",
+    "cvv": "TODO: fill per site",
+    "expiredNumber": "TODO: fill per site",
+    "invalidNumber": "TODO: fill per site",
+    "empty": "TODO: fill per site"
+  }
+}

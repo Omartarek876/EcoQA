@@ -1,0 +1,11 @@
+{
+  "registration": {
+    "name": "TODO: املأ حسب الموقع",
+    "validEmail": "TODO: املأ حسب الموقع",
+    "existingEmail": "TODO: املأ حسب الموقع",
+    "validPassword": "TODO: املأ حسب الموقع",
+    "shortPassword": "TODO: املأ حسب الموقع",
+    "mismatchedConfirmPassword": "TODO: املأ حسب الموقع",
+    "empty": "TODO: املأ حسب الموقع"
+  }
+}

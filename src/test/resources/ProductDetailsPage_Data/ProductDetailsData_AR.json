@@ -1,0 +1,9 @@
+{
+  "product": {
+    "existingProductName": "TODO: املأ حسب الموقع",
+    "validQuantity": "TODO: املأ حسب الموقع",
+    "zeroQuantity": "TODO: املأ حسب الموقع",
+    "negativeQuantity": "TODO: املأ حسب الموقع",
+    "size": "TODO: املأ حسب الموقع"
+  }
+}

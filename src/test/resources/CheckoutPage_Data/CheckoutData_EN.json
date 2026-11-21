@@ -1,0 +1,15 @@
+{
+  "shippingAddress": {
+    "firstName": "TODO: fill per site",
+    "lastName": "TODO: fill per site",
+    "street": "TODO: fill per site",
+    "city": "TODO: fill per site",
+    "postalCode": "TODO: fill per site",
+    "phone": "TODO: fill per site",
+    "empty": "TODO: fill per site"
+  },
+  "payment": {
+    "cashOnDelivery": "TODO: fill per site",
+    "card": "TODO: fill per site"
+  }
+}

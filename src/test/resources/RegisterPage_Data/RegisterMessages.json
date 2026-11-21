@@ -1,0 +1,7 @@
+{
+  "registrationSuccessMessage": "TODO: fill per site",
+  "existingEmailMessage": "TODO: fill per site",
+  "weakPasswordMessage": "TODO: fill per site",
+  "passwordMismatchMessage": "TODO: fill per site",
+  "emptyFieldMessage": "TODO: fill per site"
+}

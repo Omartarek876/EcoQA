@@ -1,0 +1,11 @@
+{
+  "registration": {
+    "name": "TODO: fill per site",
+    "validEmail": "TODO: fill per site",
+    "existingEmail": "TODO: fill per site",
+    "validPassword": "TODO: fill per site",
+    "shortPassword": "TODO: fill per site",
+    "mismatchedConfirmPassword": "TODO: fill per site",
+    "empty": "TODO: fill per site"
+  }
+}

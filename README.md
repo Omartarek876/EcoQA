@@ -60,19 +60,57 @@ empty: fill them for your site and the flows work as-is.
 - `execution.properties` - run defaults: browser, headless, window maximize, wait timeout
 - `environment.properties` - set `baseUrl` to your store under test
 
+### Per-page test data - `src/test/resources/<Page>Page_Data/`
+
+Every page template ships with its own data folder holding three JSON files:
+
+- `<Page>Messages.json` - expected assertion messages, kept in their own file
+  for readability
+- `<Page>Data_EN.json` - English test data
+- `<Page>Data_AR.json` - Arabic data, for sites that have a localized version
+
+Files ship with `TODO: fill per site` placeholders grouped by field and scenario
+(valid, empty, invalid, ...). The English and Arabic files always share the same
+keys, and a smoke test enforces that.
+
+Tests consume the files through `JsonFileManager`, the same pattern used in
+production suites: declare the files as fields, load them in `@BeforeClass`
+(the data language is selected with the `language` system property,
+`-Dlanguage=AR`, defaulting to EN), and read values inside the fluent page
+calls with JSONPath:
+
+```java
+@BeforeClass
+public void setup() {
+    loginMessages = new JsonFileManager("src/test/resources/LoginPage_Data/LoginMessages.json");
+    loginData = new JsonFileManager("src/test/resources/LoginPage_Data/LoginData_"
+            + System.getProperty("language", "EN") + ".json");
+}
+
+new LoginPage()
+        .enterEmail(loginData.getTestData("$.credentials.validEmail"))
+        .enterPassword(loginData.getTestData("$.credentials.validPassword"))
+        .clickLoginButton();
+```
+
+A ready-to-copy class showing the full pattern lives at
+`src/test/java/templates/PageTestTemplate.java`.
+
 ### Smoke tests - `src/test/java/smoke/`
 
 Verify the framework itself: configuration loads correctly, `DriverFactory`
 starts a headless session, the core UI utilities work end to end against a local
 page (navigation, typing, clicking, waits, validations, form controls, alerts),
-`JsonFileManager` reads test data, and every e-commerce page template
-constructs cleanly with its empty locators. No external site needed.
+`JsonFileManager` reads test data, every e-commerce page template constructs
+cleanly with its empty locators, and every page's data folder is complete and
+consistent across languages. No external site needed.
 
 ## Use it on your store
 
 1. Clone this repository.
 2. Set `baseUrl` in `src/main/resources/environment.properties` to your store.
-3. Fill the page locators in `src/main/java/pages/` (each is marked `TODO: fill per site`).
+3. Fill the page locators in `src/main/java/pages/` and the page data files in
+   `src/test/resources/<Page>Page_Data/` (each is marked `TODO: fill per site`).
 4. Add your tests under `src/test/java/` using the ready page flows.
 5. Run with `mvn clean test`. Override configuration from the command line when needed,
    for example `mvn clean test -Dbrowser=firefox -Dheadless=false`.

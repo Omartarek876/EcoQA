@@ -1,0 +1,9 @@
+{
+  "credentials": {
+    "validEmail": "TODO: املأ حسب الموقع",
+    "validPassword": "TODO: املأ حسب الموقع",
+    "invalidEmail": "TODO: املأ حسب الموقع",
+    "invalidPassword": "TODO: املأ حسب الموقع",
+    "empty": "TODO: املأ حسب الموقع"
+  }
+}

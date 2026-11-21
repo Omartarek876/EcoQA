@@ -1,0 +1,10 @@
+{
+  "contactForm": {
+    "name": "TODO: املأ حسب الموقع",
+    "validEmail": "TODO: املأ حسب الموقع",
+    "invalidEmail": "TODO: املأ حسب الموقع",
+    "subject": "TODO: املأ حسب الموقع",
+    "message": "TODO: املأ حسب الموقع",
+    "empty": "TODO: املأ حسب الموقع"
+  }
+}

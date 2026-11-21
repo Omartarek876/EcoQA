@@ -1,0 +1,15 @@
+{
+  "shippingAddress": {
+    "firstName": "TODO: املأ حسب الموقع",
+    "lastName": "TODO: املأ حسب الموقع",
+    "street": "TODO: املأ حسب الموقع",
+    "city": "TODO: املأ حسب الموقع",
+    "postalCode": "TODO: املأ حسب الموقع",
+    "phone": "TODO: املأ حسب الموقع",
+    "empty": "TODO: املأ حسب الموقع"
+  },
+  "payment": {
+    "cashOnDelivery": "TODO: املأ حسب الموقع",
+    "card": "TODO: املأ حسب الموقع"
+  }
+}

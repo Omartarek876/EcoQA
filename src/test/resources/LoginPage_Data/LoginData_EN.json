@@ -1,0 +1,9 @@
+{
+  "credentials": {
+    "validEmail": "TODO: fill per site",
+    "validPassword": "TODO: fill per site",
+    "invalidEmail": "TODO: fill per site",
+    "invalidPassword": "TODO: fill per site",
+    "empty": "TODO: fill per site"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "product": {
+    "existingProductName": "TODO: fill per site",
+    "validQuantity": "TODO: fill per site",
+    "zeroQuantity": "TODO: fill per site",
+    "negativeQuantity": "TODO: fill per site",
+    "size": "TODO: fill per site"
+  }
+}

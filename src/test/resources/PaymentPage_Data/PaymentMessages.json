@@ -1,0 +1,6 @@
+{
+  "paymentSuccessMessage": "TODO: fill per site",
+  "paymentDeclinedMessage": "TODO: fill per site",
+  "invalidCardMessage": "TODO: fill per site",
+  "emptyFieldMessage": "TODO: fill per site"
+}
