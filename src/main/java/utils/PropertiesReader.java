@@ -1,32 +1,30 @@
 package utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collection;
+import java.io.InputStream;
 import java.util.Properties;
-import org.apache.commons.io.FileUtils;
 
-    public class PropertiesReader {
-    private static String propRoot = "src/main/resources/";
+public final class PropertiesReader {
+    private static final String[] CONFIG_FILES = {"environment.properties", "execution.properties"};
 
-    public static void loadProperties() {
-        Properties properties = new Properties();
-        Collection<File> propertiesFilesList;
-        propertiesFilesList = FileUtils.listFiles(new File(propRoot), new String[] { "properties" }, true);
-        propertiesFilesList.forEach(propertyFile -> {
-            try {
-                properties.load(new FileInputStream(propertyFile));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                System.out.println(e.getMessage());
-            } catch (IOException ioe) {
-                System.out.println(ioe.getMessage());
-            }
-            properties.putAll(System.getProperties());
-            System.getProperties().putAll(properties);
-        });
+    private PropertiesReader() {
     }
 
+    /** Loads bundled defaults without replacing values passed through -D options. */
+    public static synchronized void loadProperties() {
+        Properties defaults = new Properties();
+        ClassLoader classLoader = PropertiesReader.class.getClassLoader();
+        for (String resource : CONFIG_FILES) {
+            try (InputStream input = classLoader.getResourceAsStream(resource)) {
+                if (input == null) {
+                    throw new IllegalStateException("Missing configuration resource: " + resource);
+                }
+                defaults.load(input);
+            } catch (IOException e) {
+                throw new IllegalStateException("Could not load configuration resource: " + resource, e);
+            }
+        }
+
+        defaults.forEach((key, value) -> System.getProperties().putIfAbsent(key, value));
+    }
 }

@@ -11,20 +11,35 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 public class DriverFactory {
 
-    private static WebDriver driver;
+    private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
     public static void InitializeDriver() {
+        PropertiesReader.loadProperties();
         InitializeDriver(System.getProperty("browser"), Boolean.parseBoolean(System.getProperty("headless")), Boolean.parseBoolean(System.getProperty("windowMaximize")));
     }
 
     public static void InitializeDriver(String browser, boolean headless, boolean maximizeWindow) {
+        if (browser == null || browser.isBlank()) {
+            throw new IllegalArgumentException("Browser must be configured (chrome, firefox, or edge)");
+        }
+        quitDriver();
         Map<String, Object> prefs = new HashMap<>();
         prefs.put("profile.managed_default_content_settings.images", 2); // block images
         prefs.put("profile.managed_default_content_settings.ads", 2);    // block ads
-        switch (browser.toLowerCase().trim()) {
+        prefs.put("profile.default_content_setting_values.ads", 2);
+        prefs.put("profile.default_content_setting_values.popups", 2);
+        String downloadDirectory = System.getProperty("download.dir");
+        if (downloadDirectory != null && !downloadDirectory.isBlank()) {
+            prefs.put("download.default_directory", downloadDirectory);
+            prefs.put("download.prompt_for_download", false);
+            prefs.put("safebrowsing.enabled", true);
+        }
+        WebDriver driver;
+        switch (browser.toLowerCase(Locale.ROOT).trim()) {
             case "chrome":
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.setExperimentalOption("prefs", prefs);
@@ -49,17 +64,25 @@ public class DriverFactory {
             default:
                 throw new IllegalArgumentException("Browser not supported: " + browser);
         }
+        DRIVER.set(driver);
         if (maximizeWindow) {
             driver.manage().window().maximize();
         }
     }
 
     public static WebDriver getDriver() {
-        return driver;
+        return DRIVER.get();
     }
 
     @Step("Quit the browser")
     public static void quitDriver() {
-        driver.quit();
+        WebDriver driver = DRIVER.get();
+        if (driver != null) {
+            try {
+                driver.quit();
+            } finally {
+                DRIVER.remove();
+            }
+        }
     }
 }

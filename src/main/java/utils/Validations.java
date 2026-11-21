@@ -2,7 +2,6 @@ package utils;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
 public class Validations {
@@ -31,19 +30,19 @@ public class Validations {
 
     @Step("Assert element is NOT visible")
     public static void assertElementIsNotVisible(By locator) {
-        Assert.assertFalse(ElementActions.getElement(locator).isDisplayed(),"Expected element to be hidden but it was visible: " + locator);
+        Assert.assertTrue(WaitUtils.waitForInvisibility(locator), "Expected element to be hidden or absent but it remained visible: " + locator);
     }
 
     /* -------------------- ENABLE / DISABLE VALIDATIONS -------------------- */
 
     @Step("Assert button located in [{locator}] is disabled")
     public static void assertButtonIsDisabled(By locator) {
-        Assert.assertFalse(ElementActions.getElement(locator).isEnabled(), "Expected element located in ["+locator+"] to be visible but it was not");
+        Assert.assertFalse(ElementActions.getElement(locator).isEnabled(), "Expected element located at [" + locator + "] to be disabled");
     }
 
     @Step("Assert button is enabled")
     public static void assertButtonIsEnabled(By locator) {
-        Assert.assertTrue(ElementActions.getElement(locator).isEnabled(), "Expected element located in ["+locator+"] to be visible but it was not");
+        Assert.assertTrue(ElementActions.getElement(locator).isEnabled(), "Expected element located at [" + locator + "] to be enabled");
     }
 
     /* -------------------- REQUIRED FIELD VALIDATIONS -------------------- */
@@ -51,7 +50,7 @@ public class Validations {
     @Step("Assert required field error message equals [{expectedMessage}]")
     public static void assertRequiredFieldError(By locator, String expectedMessage) {
         String actualMessage = ElementActions.getText(locator);
-        Assert.assertEquals(ElementActions.getText(locator),expectedMessage,"Required field error message mismatch");
+        Assert.assertEquals(actualMessage, expectedMessage, "Required field error message mismatch");
     }
 
     /* -------------------- ATTRIBUTE VALIDATIONS -------------------- */

@@ -27,14 +27,14 @@ public class JsonFileManager {
     }
 
     public String getTestData(String jsonPath) {
-        String testData = "";
         try {
-            testData = JsonPath.read(jsonReader, jsonPath);
+            Object testData = JsonPath.read(jsonReader, jsonPath);
+            return String.valueOf(testData);
         } catch (PathNotFoundException e) {
             e.printStackTrace();
             Assert.fail("No results for json path: '" + jsonPath + "' in the json file: '" + this.jsonFilePath + "'");
+            return "";
         }
-        return testData;
     }
 
 }
