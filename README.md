@@ -25,10 +25,20 @@ empty: fill them for your site and the flows work as-is.
 | Class | Ready flows |
 | --- | --- |
 | `LoginPage` | enter credentials, submit, full `login(email, password)` flow, login error validation |
+| `RegisterPage` | registration form, full `register(name, email, password)` flow, registration error validation |
+| `ForgotPasswordPage` | full `requestPasswordReset(email)` flow, reset confirmation validation |
 | `HomePage` | open the store from the configured `baseUrl`, product search, navigation to login/products/cart |
 | `ProductsPage` | list and read products, open product details, add product to cart |
+| `SearchResultsPage` | read and count results, sort results, open product details, add to cart from results |
+| `ProductDetailsPage` | product name/price, quantity and size selection, add to cart, add to wishlist |
 | `CartPage` | read cart items, update quantities, remove items, cart total, proceed to checkout |
 | `CheckoutPage` | shipping address, payment method selection, place order, order confirmation validation |
+| `PaymentPage` | card details, confirm payment, payment error validation |
+| `OrderConfirmationPage` | confirmation message, order number, order confirmation validation, continue shopping |
+| `OrdersPage` | order history list, numbers and statuses, order details, reorder items |
+| `AccountPage` | profile read/update, add address, navigation to orders and wishlist, update validation |
+| `WishlistPage` | wishlist items, move to cart, remove from wishlist, empty check |
+| `ContactPage` | contact form, full `sendMessage(...)` flow, success validation |
 
 ### Framework utilities - `src/main/java/utils/`
 
@@ -54,8 +64,9 @@ empty: fill them for your site and the flows work as-is.
 
 Verify the framework itself: configuration loads correctly, `DriverFactory`
 starts a headless session, the core UI utilities work end to end against a local
-page (navigation, typing, clicking, waits, validations, form controls, alerts)
-and `JsonFileManager` reads test data. No external site needed.
+page (navigation, typing, clicking, waits, validations, form controls, alerts),
+`JsonFileManager` reads test data, and every e-commerce page template
+constructs cleanly with its empty locators. No external site needed.
 
 ## Use it on your store
 
