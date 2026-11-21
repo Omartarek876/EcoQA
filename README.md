@@ -1,8 +1,10 @@
-# Test Automation Framework
+# EcoQA
 
-A reusable Selenium + TestNG framework in Java, with Allure reporting and a ready
-GitHub Actions pipeline. Extracted as a project-neutral base: clone it, set your
-application URL, add your pages and tests, and run.
+A ready-to-use E2E test automation framework for e-commerce websites, built with
+Selenium 4, TestNG and Allure reporting, with a plug-and-play GitHub Actions CI.
+Drop in your store's URL, fill the page locators, and the common flows every
+e-commerce site needs are ready to run: login, product search, add to cart,
+cart management and checkout.
 
 ## Tech stack
 
@@ -14,7 +16,21 @@ application URL, add your pages and tests, and run.
 
 ## What's inside
 
-`src/main/java/utils/`
+### Ready e-commerce page flows - `src/main/java/pages/`
+
+Each page class carries the methods any e-commerce site needs, written on top of
+the framework utilities with Allure step reporting. The locators are intentionally
+empty: fill them for your site and the flows work as-is.
+
+| Class | Ready flows |
+| --- | --- |
+| `LoginPage` | enter credentials, submit, full `login(email, password)` flow, login error validation |
+| `HomePage` | open the store from the configured `baseUrl`, product search, navigation to login/products/cart |
+| `ProductsPage` | list and read products, open product details, add product to cart |
+| `CartPage` | read cart items, update quantities, remove items, cart total, proceed to checkout |
+| `CheckoutPage` | shipping address, payment method selection, place order, order confirmation validation |
+
+### Framework utilities - `src/main/java/utils/`
 
 | Class | Purpose |
 | --- | --- |
@@ -29,22 +45,27 @@ application URL, add your pages and tests, and run.
 | `TestNgListener` | TestNG listener: suite/test lifecycle hooks and Allure report generation after the suite |
 | `AllureReportGenerator` | Runs `mvn allure:report` and opens the generated HTML report locally |
 
-`src/main/resources/`
+### Configuration - `src/main/resources/`
 
 - `execution.properties` - run defaults: browser, headless, window maximize, wait timeout
-- `environment.properties` - set `baseUrl` to your application under test
+- `environment.properties` - set `baseUrl` to your store under test
 
-`src/test/java/smoke/` - two smoke tests that verify the framework itself:
-configuration loads correctly and `DriverFactory` starts a headless session.
+### Smoke tests - `src/test/java/smoke/`
 
-## Use it in a new project
+Verify the framework itself: configuration loads correctly, `DriverFactory`
+starts a headless session, the core UI utilities work end to end against a local
+page (navigation, typing, clicking, waits, validations, form controls, alerts)
+and `JsonFileManager` reads test data. No external site needed.
 
-1. Clone or copy this repository.
-2. Set `baseUrl` in `src/main/resources/environment.properties`.
-3. Add your page objects under `src/main/java/pages/` and your tests under `src/test/java/`.
-4. Run with `mvn clean test`. Override configuration from the command line when needed,
+## Use it on your store
+
+1. Clone this repository.
+2. Set `baseUrl` in `src/main/resources/environment.properties` to your store.
+3. Fill the page locators in `src/main/java/pages/` (each is marked `TODO: fill per site`).
+4. Add your tests under `src/test/java/` using the ready page flows.
+5. Run with `mvn clean test`. Override configuration from the command line when needed,
    for example `mvn clean test -Dbrowser=firefox -Dheadless=false`.
-5. Generate the report with `mvn allure:report`; it lands in `target/allure-report/`.
+6. Generate the report with `mvn allure:report`; it lands in `target/allure-report/`.
 
 ## CI
 
@@ -52,4 +73,4 @@ configuration loads correctly and `DriverFactory` starts a headless session.
 trigger: it sets up Java 21, runs `mvn clean test`, generates the Allure report when
 results exist, and uploads the test results and report as build artifacts (kept for
 14 days). No project-specific values are hardcoded, so the workflow works unchanged
-in any project that adopts this framework.
+for any store that adopts this framework.
