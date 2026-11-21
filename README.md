@@ -6,6 +6,33 @@ Drop in your store's URL, fill the page locators, and the common flows every
 e-commerce site needs are ready to run: login, product search, add to cart,
 cart management and checkout.
 
+[![CI](https://github.com/Omartarek876/EcoQA/actions/workflows/CI.yml/badge.svg)](https://github.com/Omartarek876/EcoQA/actions/workflows/CI.yml)
+[![Allure report](https://img.shields.io/badge/Allure_report-live_on_GitHub_Pages-97ca00)](https://omartarek876.github.io/EcoQA/)
+![Java 21](https://img.shields.io/badge/Java-21-orange)
+![Selenium](https://img.shields.io/badge/Selenium-4.52-43B02A?logo=selenium&logoColor=white)
+![TestNG](https://img.shields.io/badge/TestNG-7.11-FF7300)
+![Maven](https://img.shields.io/badge/Maven-C71A36?logo=apachemaven&logoColor=white)
+
+![Tour of the live Allure report published from the latest CI run](docs/gifs/report-tour.gif)
+
+*Browsing the live report this framework publishes after every CI run:
+overview, suites, a passing test with its Allure steps, graphs and timeline.*
+
+## What happens on every push
+
+![Execution flow: push, CI, TestNG parallel threads with their own browsers, Allure report, live GitHub Pages link](docs/diagrams/execution-flow.svg)
+
+1. A push to `main` (or a pull request) triggers `.github/workflows/CI.yml`.
+2. The workflow sets up Java 21 and runs `mvn clean test`.
+3. TestNG runs the test classes in parallel (see
+   [Parallel execution](#parallel-execution)): every class gets its own thread
+   and its own browser session through the thread-local `DriverFactory`.
+4. The Allure integration records every step, with a screenshot attached when
+   a test fails.
+5. The report is generated as a single HTML file and published to GitHub Pages,
+   so the latest results are always one link away:
+   <https://omartarek876.github.io/EcoQA/>.
+
 ## Tech stack
 
 - Java 21, Maven
@@ -13,6 +40,53 @@ cart management and checkout.
 - TestNG
 - Allure (allure-testng 3.0) for HTML reports
 - GitHub Actions CI
+
+## Framework structure
+
+```
+EcoQA/
+├── .github/workflows/CI.yml    plug-and-play pipeline: test, report, publish
+├── src/main/java/
+│   ├── pages/                  ready e-commerce page flows, locators to fill
+│   └── utils/                  DriverFactory, element actions, waits,
+│                               listeners, retry, Allure helpers
+├── src/main/resources/
+│   ├── environment.properties  baseUrl of the store under test
+│   └── execution.properties    browser, headless, waits, retry attempts
+├── src/test/java/
+│   ├── smoke/                  framework self-tests, run in parallel in CI
+│   └── templates/              copy-ready test class template
+├── src/test/resources/
+│   └── <Page>Page_Data/        messages + EN/AR data files per page
+└── docs/                       screenshots, GIFs and diagrams for this README
+```
+
+How the layers connect:
+
+```mermaid
+flowchart LR
+    subgraph tests["Test layer - src/test"]
+        T["Smoke tests<br/>and your tests"]
+        D["Per-page JSON data<br/>(messages, EN, AR)"]
+    end
+    subgraph framework["Framework layer - src/main"]
+        P["Page flows<br/>pages/"]
+        U["Utilities<br/>utils/"]
+        F["DriverFactory<br/>ThreadLocal WebDriver"]
+    end
+    T --> P
+    T --> D
+    P --> U
+    D --> U
+    U --> F
+    F --> W["Selenium WebDriver<br/>Chrome / Firefox / Edge"]
+    U --> R["Allure report<br/>local + GitHub Pages"]
+```
+
+The tests never touch WebDriver directly: they call the page flows, the page
+flows call the utilities, and the utilities own the driver, the waits, the
+assertions and the reporting. Data lives next to the tests as JSON, never
+hardcoded.
 
 ## What's inside
 
@@ -188,6 +262,8 @@ report when results exist, uploads the test results and report as build artifact
 project-specific values are hardcoded, so the workflow works unchanged for any
 store that adopts this framework.
 
+![Green CI run: tests, report generation and Pages publishing](docs/screenshots/ci-green.png)
+
 ## Allure reporting
 
 Reports are generated automatically after the suite runs. No reporting code is
@@ -222,4 +298,10 @@ What the report looks like for this framework's smoke suite:
 
 ![Allure report overview](docs/screenshots/allure-overview.png)
 
-![Allure report suites view](docs/screenshots/allure-suites.png)
+A passing test with its recorded steps, exactly as the page flows report them:
+
+![A passing test with its Allure steps](docs/screenshots/allure-test-steps.png)
+
+Status, severity and duration graphs:
+
+![Allure graphs](docs/screenshots/allure-graphs.png)
