@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Framework Smoke Page</title>
+</head>
+<body>
+    <h1 id="heading">Framework Smoke</h1>
+
+    <label for="nameInput">Name</label>
+    <input id="nameInput" type="text">
+    <button id="submitBtn" type="button">Greet</button>
+    <p id="result" style="display:none"></p>
+
+    <button id="alertBtn" type="button">Show alert</button>
+
+    <label><input id="agreeCheckbox" type="checkbox"> Agree</label>
+
+    <select id="countrySelect">
+        <option value="eg">Egypt</option>
+        <option value="de">Germany</option>
+    </select>
+
+    <script>
+        document.getElementById("submitBtn").addEventListener("click", function () {
+            var name = document.getElementById("nameInput").value;
+            var result = document.getElementById("result");
+            result.textContent = "Hello, " + name + "!";
+            result.style.display = "block";
+        });
+        document.getElementById("alertBtn").addEventListener("click", function () {
+            alert("Smoke alert");
+        });
+    </script>
+</body>
+</html>

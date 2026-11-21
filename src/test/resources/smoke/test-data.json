@@ -1,0 +1,7 @@
+{
+  "smoke": {
+    "userName": "Framework Smoke User",
+    "expectedGreeting": "Hello, Framework Smoke User!",
+    "alertMessage": "Smoke alert"
+  }
+}

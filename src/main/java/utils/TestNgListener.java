@@ -10,85 +10,97 @@ import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestNgListener implements ISuiteListener, ITestListener, IInvokedMethodListener, IAlterSuiteListener {
+    private static final AtomicInteger TEST_COUNTER = new AtomicInteger();
+    private static final String TEST_NUMBER_ATTRIBUTE = TestNgListener.class.getName() + ".testNumber";
+    private static final String TEST_FINISHED_ATTRIBUTE = TestNgListener.class.getName() + ".testFinished";
 
     @Override
     public void onStart(ISuite suite) {
-        System.out.println("Hello from Giza Systems Interns 2025 - Graduation Project \n" +
-                "we are starting our execution from here....");
+        System.out.println("[START EXECUTION]");
         PropertiesReader.loadProperties();
     }
 
     @Override
     public void onFinish(ISuite suite) {
-        System.out.println(".....Execution is finished.....\n.....Executed By Omar Tarek and Bassant Kamal.....\n.....Thank you!.....");
-        try {
-            // Generate report using Linux-compatible command
-            String[] generateCmd = {"mvn", "allure:report"};
-            Process genProcess = new ProcessBuilder(generateCmd)
-                    .inheritIO()
-                    .start();
-            genProcess.waitFor();
-            System.out.println("Allure report generated successfully!");
-
-            String reportPath = System.getProperty("user.dir") + File.separator + "target" + File.separator + "allure-report";
-
-            // Serve report (optional)
-            File htmlFile = new File(reportPath + File.separator + "index.html");
-            if (htmlFile.exists()) {
-                if (java.awt.Desktop.isDesktopSupported()) {
-                    java.awt.Desktop.getDesktop().browse(htmlFile.toURI());
-                    System.out.println("Allure report opened in browser!");
-                } else {
-                    System.out.println("Desktop browsing not supported on this system. Open report manually at: " + htmlFile.getAbsolutePath());
-                }
-            } else {
-                System.out.println("Report file not found at: " + htmlFile.getAbsolutePath());
-            }
-            System.out.println("Allure report is being served at http://localhost:####/ (Press Ctrl+C to stop)");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.println("END EXECUTION");
+        AllureReportGenerator.generate();
     }
 
     @Override
     public void onTestStart(ITestResult result) {
-        System.out.println("[INFO] Starting test: " + result.getName());
+        int testNumber = TEST_COUNTER.incrementAndGet();
+        result.setAttribute(TEST_NUMBER_ATTRIBUTE, testNumber);
+        System.out.println("[INFO] Starting test #" + testNumber + ": " + result.getName());
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        System.out.println("[PASS] Test passed: " + result.getName());
+        logTestFinished(result, "PASS");
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        logTestFinished(result, "FAIL");
     }
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        if (!method.isTestMethod() || ITestResult.FAILURE != testResult.getStatus()) {
+            return;
+        }
         WebDriver driver = DriverFactory.getDriver();
-        if (ITestResult.FAILURE == testResult.getStatus() && driver != null) {
+        if (driver == null) {
+            return;
+        }
+        try {
             byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-            Allure.addAttachment("Failure Screenshot", new ByteArrayInputStream(screenshot));
+            Allure.attachment(
+                    "Failure Screenshot",
+                    "image/png",
+                    new ByteArrayInputStream(screenshot),
+                    AttachmentOptions.empty()
+            );
+        } catch (RuntimeException e) {
+            System.err.println("Could not capture failure screenshot: " + e.getMessage());
         }
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        System.out.println("[SKIP] Test skipped: " + result.getName());
+        logTestFinished(result, "SKIP");
     }
 
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-        System.out.println("[WARN] Test failed but within success percentage: " + result.getName());
+        logTestFinished(result, "WARN");
     }
 
     @Override
     public void onTestFailedWithTimeout(ITestResult result) {
-        System.out.println("[TIMEOUT] Test failed due to timeout: " + result.getName());
+        logTestFinished(result, "TIMEOUT");
         onTestFailure(result);
+    }
+
+    private void logTestFinished(ITestResult result, String outcome) {
+        synchronized (result) {
+            if (result.getAttribute(TEST_FINISHED_ATTRIBUTE) != null) {
+                return;
+            }
+            result.setAttribute(TEST_FINISHED_ATTRIBUTE, Boolean.TRUE);
+        }
+        Object assignedNumber = result.getAttribute(TEST_NUMBER_ATTRIBUTE);
+        int testNumber = assignedNumber instanceof Integer
+                ? (Integer) assignedNumber
+                : TEST_COUNTER.incrementAndGet();
+        if (assignedNumber == null) {
+            result.setAttribute(TEST_NUMBER_ATTRIBUTE, testNumber);
+        }
+        System.out.println("[" + outcome + "] Finished test #" + testNumber + ": " + result.getName());
     }
 
     @Override
@@ -104,7 +116,9 @@ public class TestNgListener implements ISuiteListener, ITestListener, IInvokedMe
             for (XmlTest test : originalTests) {
                 List<XmlClass> classes = test.getClasses();
 
-                if (classes.size() > 1) {
+                if (classes.isEmpty()) {
+                    suite.getTests().add(test);
+                } else if (classes.size() > 1) {
                     // Create separate XmlTest for each class
                     for (XmlClass clazz : classes) {
                         XmlTest newTest = new XmlTest(suite);

@@ -147,7 +147,7 @@ public class ElementActions {
 
     public static void basicAuthUsingRobot(String name, String pass) throws AWTException {
         Robot robot = new Robot();
-        WaitUtils.setImplicitWait(1); // Small wait to allow the popup to appear.
+        robot.delay(500); // Allow the browser authentication prompt to appear.
 
         // Type username
         for (char c : name.toCharArray()) {
