@@ -85,3 +85,29 @@ trigger: it sets up Java 21, runs `mvn clean test`, generates the Allure report 
 results exist, and uploads the test results and report as build artifacts (kept for
 14 days). No project-specific values are hardcoded, so the workflow works unchanged
 for any store that adopts this framework.
+
+## Allure reporting
+
+Reports are generated automatically after the suite runs. No reporting code is
+needed in individual tests:
+
+1. **During the run**, the Allure TestNG integration writes test results to
+   `target/allure-results/`. The framework listener attaches a screenshot when
+   a test fails and a browser session is available.
+2. **After the suite**, `TestNgListener` calls `AllureReportGenerator`, which
+   runs `mvn allure:report` and writes `target/allure-report/index.html`.
+   On a desktop with browser support, it also tries to open the report.
+   Maven must be available on `PATH` for this automatic step.
+3. **In CI**, the workflow also has an explicit report-generation step when
+   results exist, followed by an artifact upload. Open a completed Actions run,
+   download `ui-test-results`, unzip it, and open `allure-report/index.html`.
+   The report is configured as a single HTML file and includes its data.
+
+To regenerate a report locally, run `mvn allure:report`. To serve the latest
+results in your browser, run `mvn allure:serve`.
+
+What the report looks like for this framework's smoke suite:
+
+![Allure report overview](docs/screenshots/allure-overview.png)
+
+![Allure report suites view](docs/screenshots/allure-suites.png)
