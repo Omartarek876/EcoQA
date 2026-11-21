@@ -105,7 +105,7 @@ public class TestNgListener implements ISuiteListener, ITestListener, IInvokedMe
 
     @Override
     public void alter(List<XmlSuite> suites) {
-        String projectName = System.getProperty("allure.suite.name", "DefaultProjectName");
+        String projectName = System.getProperty("allure.suite.name", "EcoQA");
 
         for (XmlSuite suite : suites) {
             suite.setName(projectName);
