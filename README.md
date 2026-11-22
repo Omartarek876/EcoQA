@@ -26,7 +26,8 @@ EcoQA/
 │                               listeners, retry, Allure helpers
 ├── src/main/resources/
 │   ├── environment.properties  baseUrl of the store under test
-│   └── execution.properties    browser, headless, waits, retry attempts
+│   ├── execution.properties    browser, headless, waits, retry attempts
+│   └── allure.properties       Allure results directory and suite name
 ├── src/test/java/
 │   ├── smoke/                  framework self-tests, run in parallel in CI
 │   └── templates/              copy-ready test class template
@@ -153,6 +154,7 @@ empty: fill them for your site and the flows work as-is.
 
 - `execution.properties` - run defaults: browser, headless, window maximize, wait timeout
 - `environment.properties` - set `baseUrl` to your store under test
+- `allure.properties` - Allure reporting: results directory and suite name
 
 ### Per-page test data - `src/test/resources/<Page>Page_Data/`
 
