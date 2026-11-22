@@ -85,12 +85,6 @@
                     <parallel>${parallelMode}</parallel>
                     <threadCount>${parallelThreads}</threadCount>
 
-                    <!-- Allure results output directory -->
-                    <systemPropertyVariables>
-                        <allure.results.directory>target/allure-results</allure.results.directory>
-                        <allure.suite.name>${project.artifactId}</allure.suite.name>
-                    </systemPropertyVariables>
-
                     <!-- Enable AspectJ agent -->
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/1.9.25/aspectjweaver-1.9.25.jar"
